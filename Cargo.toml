@@ -17,7 +17,8 @@ features = ["ntdef", "windef", "minwinbase", "wtypesbase", "limits", "vcruntime"
 	"ktmtypes", "wtypes", "propidl", "uxtheme",
 	"sspi", "lsalookup", "subauth", "commctrl",
 	"wincred", "commoncontrols",
-	"wincon"
+	"wincon",
+	"basetsd", "winnt", "wingdi", "winuser", "unknwnbase", "ntstatus", "libloaderapi", "processthreadsapi"
 	]
 
 [patch.crates-io]

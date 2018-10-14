@@ -4,5 +4,6 @@
 
 [dependencies.std]
 features = [ "force_alloc_system" ]
+default-features = false
 
 [dependencies.panic_unwind]

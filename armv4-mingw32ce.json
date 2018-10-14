@@ -1,5 +1,5 @@
 {
-	"llvm-target": "thumbv4m-pc-windows",
+	"llvm-target": "armv4m-pc-windows",
 	"target-endian": "little",
 	"target-pointer-width": "32",
 	"target-c-int-width": "32",
@@ -13,7 +13,7 @@
 
 	"executables": true,
 	"exe-suffix": ".exe",
-	"dynamic-linking": true,
+	"dynamic-linking": false,
 	"dll-prefix": "",
 	"dll-suffix": ".dll",
 	"staticlib-prefix": "",
@@ -37,17 +37,12 @@
 			"-Wl,--enable-long-section-names",
 			"-fno-use-linker-plugin",
 			"-Wl,--nxcompat",
-			"-nostdlib",
-			"-m64"
+			"-nostdlib"
 		]
 	},
 	"pre-link-objects-dll": [
-		"dllcrt2.o",
-		"rsbegin.o"
 	],
 	"pre-link-objects-exe": [
-		"crt2.o",
-		"rsbegin.o"
 	],
 	"requires-uwtable": true,
 
