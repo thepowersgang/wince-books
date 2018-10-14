@@ -1,0 +1,58 @@
+{
+	"llvm-target": "thumbv4m-pc-windows",
+	"target-endian": "little",
+	"target-pointer-width": "32",
+	"target-c-int-width": "32",
+	"max-atomic-width": "32",
+	"data-layout": "e-m:e-p:32:32-i64:64-v128:64:128-a:0:32-n32-S64",
+	"arch": "arm",
+
+	"os": "windows",
+	"target-family": "windows",
+	"is-like-windows": true,
+
+	"executables": true,
+	"exe-suffix": ".exe",
+	"dynamic-linking": true,
+	"dll-prefix": "",
+	"dll-suffix": ".dll",
+	"staticlib-prefix": "",
+	"staticlib-suffix": ".lib",
+
+	"linker-flavor": "gcc",
+	"linker": "arm-mingw32ce-gcc",
+	"late-link-args": {
+		"gcc": [
+			"-lmingwex",
+			"-lmingw32",
+			"-lgcc",
+			"-lmsvcrt",
+			"-lmsvcrt",
+			"-luser32",
+			"-lkernel32"
+		]
+	},
+	"pre-link-args": {
+		"gcc": [
+			"-Wl,--enable-long-section-names",
+			"-fno-use-linker-plugin",
+			"-Wl,--nxcompat",
+			"-nostdlib",
+			"-m64"
+		]
+	},
+	"pre-link-objects-dll": [
+		"dllcrt2.o",
+		"rsbegin.o"
+	],
+	"pre-link-objects-exe": [
+		"crt2.o",
+		"rsbegin.o"
+	],
+	"requires-uwtable": true,
+
+	"emit-debug-gdb-scripts": false,
+	"function-sections": false,
+
+	"features": "+strict-align,+v4t"
+}

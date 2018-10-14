@@ -1,0 +1,18 @@
+Device:
+- Motorlla MC65
+   - ?ARMv4 processor
+
+
+- ce-gcc
+
+- Motorola "EMDK for C"
+  - https://www.zebra.com/us/en/support-downloads/software/developer-tools/emdk-for-c.html
+  - Extract "v2.8/Integrator/Device" as "ThirdParty/EMDK"
+  - Extract "v2.8/*.chm" into "ThirdParty/EMDK" (for help)
+
+
+  - `cd ThirdParty/EMDK/Include/ArmV4`
+  - `mv Scanerr.h ScanErr.h`
+  - `mv Scandef.h ScanDef.h`
+  - `mv Strucinf.h StrucInf.h`
+  - `mv Scanmacr.h ScanMacr.h`

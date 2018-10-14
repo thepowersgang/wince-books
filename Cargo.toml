@@ -1,0 +1,24 @@
+[package]
+name = "wince_books"
+version = "0.1.0"
+authors = ["John Hodge <tpg@mutabah.net>"]
+
+[dependencies]
+#winit = "*"
+#conrod = "*"
+#sqlite = "*"
+#hyper = "*"
+libmotorola-scan = { path = "deps/libmotorola-scan" }
+
+[dependencies.winapi]
+version = "0.3.6"
+features = ["ntdef", "windef", "minwinbase", "wtypesbase", "limits", "vcruntime", "rpc", "rpcndr", "rpcdce", "fileapi", "cfg", "cfgmgr32", "vadefs",
+	"objidl", "objidlbase", "winreg", "excpt",
+	"ktmtypes", "wtypes", "propidl", "uxtheme",
+	"sspi", "lsalookup", "subauth", "commctrl",
+	"wincred", "commoncontrols",
+	"wincon"
+	]
+
+[patch.crates-io]
+winapi = { path = "deps/winapi-0.3.6" }

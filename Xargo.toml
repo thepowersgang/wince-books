@@ -1,0 +1,8 @@
+#
+# NOTE: This just desribes the sysroot, Cargo.toml is still used
+#
+
+[dependencies.std]
+features = [ "force_alloc_system" ]
+
+[dependencies.panic_unwind]

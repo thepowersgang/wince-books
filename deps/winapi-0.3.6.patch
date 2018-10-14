@@ -1,0 +1,183 @@
+diff -rub /home/tpg/.cargo/registry/src/github.com-1ecc6299db9ec823/winapi-0.3.6/src/macros.rs winapi-0.3.6/src/macros.rs
+--- /home/tpg/.cargo/registry/src/github.com-1ecc6299db9ec823/winapi-0.3.6/src/macros.rs	2018-09-19 23:35:56.000000000 +0800
++++ winapi-0.3.6/src/macros.rs	2018-10-09 18:44:45.796192461 +0800
+@@ -295,7 +295,7 @@
+         [$stype32:ty; $ssize32:expr] [$stype64:ty; $ssize64:expr],
+         $($variant:ident $variant_mut:ident: $ftype:ty,)+
+     }) => (
+-        #[repr(C)] $(#[$attrs])* #[cfg(target_arch = "x86")]
++        #[repr(C)] $(#[$attrs])* #[cfg(any(target_arch = "x86", target_arch="arm"))]
+         pub struct $name([$stype32; $ssize32]);
+         #[repr(C)] $(#[$attrs])* #[cfg(target_arch = "x86_64")]
+         pub struct $name([$stype64; $ssize64]);
+diff -rub /home/tpg/.cargo/registry/src/github.com-1ecc6299db9ec823/winapi-0.3.6/src/um/commctrl.rs winapi-0.3.6/src/um/commctrl.rs
+--- /home/tpg/.cargo/registry/src/github.com-1ecc6299db9ec823/winapi-0.3.6/src/um/commctrl.rs	2018-07-28 14:33:35.000000000 +0800
++++ winapi-0.3.6/src/um/commctrl.rs	2018-10-09 18:26:41.506266313 +0800
+@@ -781,6 +781,16 @@
+     dwData: DWORD_PTR,
+     iString: INT_PTR,
+ }}
++#[cfg(target_arch = "arm")]
++STRUCT!{struct TBBUTTON {
++    iBitmap: c_int,
++    idCommand: c_int,
++    fsState: BYTE,
++    fsStyle: BYTE,
++    bReserved: [BYTE; 2],
++    dwData: DWORD_PTR,
++    iString: INT_PTR,
++}}
+ #[cfg(target_arch = "x86_64")]
+ STRUCT!{struct TBBUTTON {
+     iBitmap: c_int,
+diff -rub /home/tpg/.cargo/registry/src/github.com-1ecc6299db9ec823/winapi-0.3.6/src/um/winbase.rs winapi-0.3.6/src/um/winbase.rs
+--- /home/tpg/.cargo/registry/src/github.com-1ecc6299db9ec823/winapi-0.3.6/src/um/winbase.rs	2018-09-20 01:59:52.000000000 +0800
++++ winapi-0.3.6/src/um/winbase.rs	2018-10-09 18:46:25.611470425 +0800
+@@ -116,6 +116,8 @@
+ // FAIL_FAST_*
+ #[cfg(target_arch = "x86")]
+ pub type LPLDT_ENTRY = PLDT_ENTRY;
++#[cfg(target_arch = "arm")]
++pub type LPLDT_ENTRY = LPVOID; // TODO - fix this for 32-bit
+ #[cfg(target_arch = "x86_64")]
+ pub type LPLDT_ENTRY = LPVOID; // TODO - fix this for 32-bit
+ //SP_SERIALCOMM
+diff -rub /home/tpg/.cargo/registry/src/github.com-1ecc6299db9ec823/winapi-0.3.6/src/um/winnt.rs winapi-0.3.6/src/um/winnt.rs
+--- /home/tpg/.cargo/registry/src/github.com-1ecc6299db9ec823/winapi-0.3.6/src/um/winnt.rs	2018-07-29 01:52:56.000000000 +0800
++++ winapi-0.3.6/src/um/winnt.rs	2018-10-09 18:48:45.543071687 +0800
+@@ -21,6 +21,11 @@
+ pub const MAX_NATURAL_ALIGNMENT: usize = 4;
+ pub const MEMORY_ALLOCATION_ALIGNMENT: usize = 8;
+ }
++#[cfg(target_arch = "arm")]
++IFDEF!{
++pub const MAX_NATURAL_ALIGNMENT: usize = 4;
++pub const MEMORY_ALLOCATION_ALIGNMENT: usize = 8;
++}
+ #[cfg(target_arch = "x86_64")]
+ IFDEF!{
+ pub const MAX_NATURAL_ALIGNMENT: usize = 8;
+@@ -113,6 +118,8 @@
+ pub type PGROUP_AFFINITY = *mut GROUP_AFFINITY;
+ #[cfg(target_arch = "x86")]
+ pub const MAXIMUM_PROC_PER_GROUP: BYTE = 32;
++#[cfg(target_arch = "arm")]	// TODO: Check
++pub const MAXIMUM_PROC_PER_GROUP: BYTE = 32;
+ #[cfg(target_arch = "x86_64")]
+ pub const MAXIMUM_PROC_PER_GROUP: BYTE = 64;
+ pub const MAXIMUM_PROCESSORS: BYTE = MAXIMUM_PROC_PER_GROUP;
+@@ -914,6 +921,11 @@
+     High: LONGLONG,
+ }}
+ pub type PM128A = *mut M128A;
++#[cfg(target_arch = "arm")]
++STRUCT!{struct XSAVE_FORMAT {
++	// TODO:
++	ControlWord: WORD,
++}}
+ #[cfg(target_arch = "x86")]
+ STRUCT!{struct XSAVE_FORMAT { // FIXME align 16
+     ControlWord: WORD,
+@@ -974,6 +986,16 @@
+     Buffer: PVOID,
+     Reserved3: DWORD,
+ }}
++#[cfg(target_arch = "arm")]
++STRUCT!{struct XSTATE_CONTEXT {
++    Mask: DWORD64,
++    Length: DWORD,
++    //Reserved1: DWORD,
++    //Area: PXSAVE_AREA,
++    //Reserved2: DWORD,
++    //Buffer: PVOID,
++    //Reserved3: DWORD,
++}}
+ #[cfg(target_arch = "x86_64")]
+ STRUCT!{struct XSTATE_CONTEXT {
+     Mask: DWORD64,
+@@ -1270,6 +1292,64 @@
+ }}
+ pub type PCONTEXT = *mut CONTEXT;
+ } // IFDEF(x86)
++
++#[cfg(target_arch = "arm")]
++IFDEF!{
++pub const EXCEPTION_READ_FAULT: DWORD = 0;
++pub const EXCEPTION_WRITE_FAULT: DWORD = 1;
++pub const EXCEPTION_EXECUTE_FAULT: DWORD = 8;
++pub const CONTEXT_i386: DWORD = 0x00010000;
++pub const CONTEXT_i486: DWORD = 0x00010000;
++pub const CONTEXT_CONTROL: DWORD = CONTEXT_i386 | 0x00000001;
++pub const CONTEXT_INTEGER: DWORD = CONTEXT_i386 | 0x00000002;
++pub const CONTEXT_SEGMENTS: DWORD = CONTEXT_i386 | 0x00000004;
++pub const CONTEXT_FLOATING_POINT: DWORD = CONTEXT_i386 | 0x00000008;
++pub const CONTEXT_DEBUG_REGISTERS: DWORD = CONTEXT_i386 | 0x00000010;
++pub const CONTEXT_EXTENDED_REGISTERS: DWORD = CONTEXT_i386 | 0x00000020;
++pub const CONTEXT_FULL: DWORD = CONTEXT_CONTROL | CONTEXT_INTEGER | CONTEXT_SEGMENTS;
++pub const CONTEXT_ALL: DWORD = CONTEXT_CONTROL | CONTEXT_INTEGER | CONTEXT_SEGMENTS
++    | CONTEXT_FLOATING_POINT | CONTEXT_DEBUG_REGISTERS | CONTEXT_EXTENDED_REGISTERS;
++pub const CONTEXT_XSTATE: DWORD = CONTEXT_i386 | 0x00000040;
++pub const CONTEXT_EXCEPTION_ACTIVE: DWORD = 0x08000000;
++pub const CONTEXT_SERVICE_ACTIVE: DWORD = 0x10000000;
++pub const CONTEXT_EXCEPTION_REQUEST: DWORD = 0x40000000;
++pub const CONTEXT_EXCEPTION_REPORTING: DWORD = 0x80000000;
++pub const MAXIMUM_SUPPORTED_EXTENSION: usize = 512;
++
++const ARM_MAX_BREAKPOINTS: usize = 8;
++const ARM_MAX_WATCHPOINTS: usize = 1;
++STRUCT!{struct CONTEXT {
++    ContextFlags: DWORD,
++	R0: ULONG,
++    R1: ULONG,
++    R2: ULONG,
++    R3: ULONG,
++    R4: ULONG,
++    R5: ULONG,
++    R6: ULONG,
++    R7: ULONG,
++    R8: ULONG,
++    R9: ULONG,
++    R10: ULONG,
++    R11: ULONG,
++    R12: ULONG,
++    Sp: ULONG,
++    Lr: ULONG,
++    Pc: ULONG,
++    Cpsr: ULONG,
++    Fpscr: ULONG,
++    Padding: ULONG,
++    D: [u64; 32],
++    Bvr: [ULONG; ARM_MAX_BREAKPOINTS],
++    Bcr: [ULONG; ARM_MAX_BREAKPOINTS],
++    Wvr: [ULONG; ARM_MAX_WATCHPOINTS],
++    Wcr: [ULONG; ARM_MAX_WATCHPOINTS],
++	Padding2: [ULONG; 2],
++}}
++pub type PCONTEXT = *mut CONTEXT;
++} // IFDEF(arm)
++
++
+ STRUCT!{struct LDT_ENTRY_Bytes {
+     BaseMid: BYTE,
+     Flags1: BYTE,
+@@ -7093,6 +7173,20 @@
+ IFDEF!{
+ STRUCT!{struct SLIST_HEADER_s {
+     Next: SLIST_ENTRY,
++    Depth: WORD,
++    Reserved: WORD,
++}}
++UNION!{union SLIST_HEADER {
++    [u64; 1],
++    Alignment Alignment_mut: ULONGLONG,
++    s s_mut: SLIST_HEADER_s,
++}}
++pub type PSLIST_HEADER = *mut SLIST_HEADER;
++}
++#[cfg(target_arch = "arm")]
++IFDEF!{
++STRUCT!{struct SLIST_HEADER_s {
++    Next: SLIST_ENTRY,
+     Depth: WORD,
+     Reserved: WORD,
+ }}

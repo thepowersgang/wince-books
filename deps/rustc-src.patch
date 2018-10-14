@@ -1,0 +1,12 @@
+diff -rub rustc-sysroot/src/libcompiler_builtins/build.rs /home/tpg/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src/libcompiler_builtins/build.rs
+--- rustc-sysroot/src/libcompiler_builtins/build.rs	2018-10-09 17:51:46.792686812 +0800
++++ /home/tpg/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src/libcompiler_builtins/build.rs	2018-10-03 21:19:28.174573396 +0800
+@@ -426,7 +426,7 @@
+         }
+ 
+         // Remove the assembly implementations that won't compile for the target
+-        if llvm_target[0] == "thumbv6m" || llvm_target[0] == "armv4" {
++        if llvm_target[0] == "thumbv6m" {
+             sources.remove(
+                 &[
+                     "clzdi2",

@@ -1,0 +1,7 @@
+[package]
+name = "libmotorola-scan-sys"
+version = "0.1.0"
+authors = ["John Hodge <tpg@mutabah.net>"]
+
+[build-dependencies]
+bindgen = "0.26.3"
