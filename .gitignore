@@ -1,0 +1,7 @@
+target/
+.*
+
+/ThirdParty/cegcc-build
+/ThirdParty/prefix
+
+/deps/*/Cargo.lock
